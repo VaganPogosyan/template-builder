@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'"/>
+    <link rel="stylesheet" href="./css/main.css">
+    <script src="./js/renderer.js" defer></script>
+    <title>Template Builder</title>
+</head>
+<body>
+    <h1>Template Builder</h1>
+    <form class="form" id="form">
+            <input type="text" name="firstCode" id="firstCode" class="codeInput">
+            <input type="text" name="secondCode" id="secondCode" class="codeInput">
+
+            <button id="submitButton" type="submit">Find Template</button>
+            <button id="clearButton">Clear</button>
+    </form>
+    <div id="outputCode">
+        Output: 
+    </div>
+    <div id="errors"></div>
+</body>
+</html>

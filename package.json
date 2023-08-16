@@ -1,0 +1,16 @@
+{
+  "name": "template-builder",
+  "version": "1.0.0",
+  "description": "App",
+  "productName": "Template Builder",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "Vagan Pogosyan",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^26.0.0"
+  }
+}

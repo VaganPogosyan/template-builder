@@ -1,0 +1,11 @@
+.codeInput, #submitButton, #clearButton, #outputCode {
+    font-size: 1.5rem;
+    width: 30%;
+    margin: 10px;
+}
+
+.form {
+    /* display: grid; */
+    /* grid: auto-flow / 1fr 1fr 2fr; */
+    /* display: flex; */
+}
