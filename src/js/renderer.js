@@ -16,17 +16,36 @@ let files;
 // const combinations = { "234+RF": "fff", "234+AB": "ffx", "C57+9P": "ffa" };
 // {'234+AB': templateCode, '234+RF': templateCode}
 
-function outputForProcedureCode(procedureCode, patientName) {
+// function outputForProcedureCode(procedureCode, patientName) {
+//   const textForProcedureCode = `Hello ${patientName}, your procedure code is: ${procedureCode}`;
+//   textAreaForProcedureCode.value += textForProcedureCode;
+// }
+
+// function outputForDenialCode(denialCode, patientName) {
+//   const textForDenialCode = ` - Denial ${patientName}, your denial code is: ${denialCode}`;
+//   textAreaForProcedureCode.value += textForDenialCode;
+// }
+
+async function getOutputText(procedureCode, denialCode, patientName) {
+  let outputText = "";
   const textForProcedureCode = `Hello ${patientName}, your procedure code is: ${procedureCode}`;
-  textAreaForProcedureCode.value = textForProcedureCode;
+
+  // get filepath to pass into readDocxFile
+  let textForDenialCode = "";
+  try {
+    textForDenialCode = await window.electronAPI.readDocxFile(
+      `${denialCode}.docx`
+    );
+  } catch (error) {
+    console.log(error);
+  }
+  // const textForDenialCode = `${denialCode}.docx`;
+  outputText = `${textForProcedureCode}\r\n\r\n${textForDenialCode}`;
+  textAreaForProcedureCode.value = outputText;
+  // return outputText;
 }
 
-function outputForDenialCode(denialCode, patientName) {
-  const textForDenialCode = `Hello ${patientName}, your denial code is: ${denialCode}`;
-  textAreaFordenialCode.value = textForDenialCode;
-}
-
-function checkCodes() {
+async function checkCodes() {
   const procedureCode = procedureCodeInput.value
     .toString()
     .toUpperCase()
@@ -62,7 +81,9 @@ function checkCodes() {
     // if (!templateCode) return false;
     // console.log(`TEMPLATE CODE: ${templateCode}`);
     // showTemplateCode(templateCode);
-    outputForProcedureCode(procedureCode, patientName);
+    // outputForProcedureCode(procedureCode, patientName);
+    // outputForDenialCode(denialCode, patientName);
+    await getOutputText(procedureCode, denialCode, patientName);
   } else {
     return noErrors;
   }
@@ -112,15 +133,13 @@ clearButton.addEventListener("click", (e) => {
   location.reload();
 });
 
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   //   if (checkCodes()) {
   //     e.preventDefault();
   //   }
-
-  // await window.electronAPI.readDocxFile(fileName);
-  errors.innerText = "";
-  checkCodes();
   e.preventDefault();
+  errors.innerText = "";
+  await checkCodes();
 });
 
 openFolderButton.addEventListener("click", async () => {

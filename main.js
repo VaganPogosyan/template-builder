@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs/promises");
 const mammoth = require("mammoth");
 let docxFiles;
+let folderPath;
 
 function createMainWindow() {
   const mainWindow = new BrowserWindow({
@@ -24,33 +25,30 @@ async function handleFolderOpen() {
   });
 
   if (!canceled) {
-    const files = await fs.readdir(filePaths[0]);
+    folderPath = filePaths[0];
+    const files = await fs.readdir(folderPath);
+    // console.log(folderPath);
     docxFiles = files.filter((file) => path.extname(file) === ".docx");
     return docxFiles;
   }
 }
 
 function handelReadDocxFile(event, fileName) {
-  // const docxFilePath = "path";
+  if (!fileName) console.log("wtf");
+  const docxFilePath = `${folderPath}/${fileName}`;
+  console.log("docxFilePath: " + docxFilePath);
 
-  fs.readFile(docxFilePath, "binary", (err, data) => {
-    if (err) {
-      console.error("Error reading .docx file:", err);
-      return;
-    }
+  let output = "";
+  output = mammoth
+    .extractRawText({ path: docxFilePath })
+    .then((result) => {
+      return result.value;
+    })
+    .catch((err) => {
+      console.error("Error extracting text from .docx file:", err);
+    });
 
-    // Convert the binary data to a readable text format using mammoth
-    mammoth
-      .extractRawText({ buffer: data })
-      .then((result) => {
-        // The result object contains the extracted text
-        console.log(result.value);
-        return result.value;
-      })
-      .catch((err) => {
-        console.error("Error extracting text from .docx file:", err);
-      });
-  });
+  return output;
 }
 
 app.whenReady().then(() => {
