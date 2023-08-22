@@ -11,6 +11,7 @@
   "author": "Vagan Pogosyan",
   "license": "ISC",
   "dependencies": {
-    "electron": "^26.0.0"
+    "electron": "^26.0.0",
+    "mammoth": "^1.6.0"
   }
 }

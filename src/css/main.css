@@ -5,7 +5,8 @@
 }
 
 #textareaOutput {
-    width: 100%;
+    position: absolute;
+    width: 70%;
 }
 
 .form {
