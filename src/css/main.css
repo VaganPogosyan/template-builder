@@ -1,12 +1,23 @@
-.codeInput, #submitButton, #clearButton, #outputCode {
+.codeInput, #submitButton, #clearButton {
     font-size: 1.5rem;
     width: 30%;
     margin: 10px;
 }
 
+#outputCode {
+    width: 100%;
+}
+
 #textareaOutput {
-    position: absolute;
-    width: 70%;
+    position: relative;
+    width: 600px;
+    height: 40%;
+    /* font-size: medium; */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+}
+
+#copyTextButton {
+    text-align: right;
 }
 
 .form {

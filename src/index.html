@@ -11,24 +11,26 @@
 <body>
     <h1>Template Builder</h1>
     <button type="button" id="openFolderButton">Open folder</button>
-    <!-- <input type="file" name="fileInput" id="fileInput"> -->
-    <form class="form" id="form">
+    <div id="mainForm">
+        <form class="form" id="form">
             <label for="procedureCode">Procedure Code:</label>
             <input type="text" name="procedureCode" id="procedureCode" class="codeInput">
-
+            
             <label for="patientName">Patient Name:</label>
             <input type="text" name="patientName" id="patientName" class="codeInput">
-
+            
             <label for="procedureCode">Denial Code:</label>
             <input type="text" name="denialCode" id="denialCode" class="codeInput">
-
+            
             <button id="submitButton" type="submit">Find Template</button>
             <button id="clearButton">Clear</button>
-    </form>
-    <div id="errors"></div>
-    <div id="outputCode">
-        Output: 
-        <textarea id="textareaOutput" rows="10"></textarea>
+        </form>
+        <div id="errors"></div>
+        <h2>Output: </h2>
+        <div id="outputCode">
+            <textarea id="textareaOutput" rows="10"></textarea>
+            <button type="button" id="copyTextButton">Copy text</button>
+        </div>
     </div>
 </body>
 </html>

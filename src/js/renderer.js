@@ -8,23 +8,9 @@ const form = document.querySelector("#form");
 const errors = document.querySelector("#errors");
 const fileInput = document.querySelector("#fileInput");
 const textAreaForProcedureCode = document.querySelector("#textareaOutput");
+const mainForm = document.querySelector("#mainForm");
 
 let files;
-// const procedureCodeDB = ["234", "567", "C57", "X21"];
-// const denialCodeDB = ["11", "RF", "AB", "4F", "9P"];
-// const combinations = { 1: ["234", "AB"], 2: ["RF", "234"], 3: ["X21", "9P"] };
-// const combinations = { "234+RF": "fff", "234+AB": "ffx", "C57+9P": "ffa" };
-// {'234+AB': templateCode, '234+RF': templateCode}
-
-// function outputForProcedureCode(procedureCode, patientName) {
-//   const textForProcedureCode = `Hello ${patientName}, your procedure code is: ${procedureCode}`;
-//   textAreaForProcedureCode.value += textForProcedureCode;
-// }
-
-// function outputForDenialCode(denialCode, patientName) {
-//   const textForDenialCode = ` - Denial ${patientName}, your denial code is: ${denialCode}`;
-//   textAreaForProcedureCode.value += textForDenialCode;
-// }
 
 async function getOutputText(procedureCode, denialCode, patientName) {
   let outputText = "";
@@ -33,16 +19,21 @@ async function getOutputText(procedureCode, denialCode, patientName) {
   // get filepath to pass into readDocxFile
   let textForDenialCode = "";
   try {
-    textForDenialCode = await window.electronAPI.readDocxFile(
+    textFromDocxFile = await window.electronAPI.readDocxFile(
       `${denialCode}.docx`
     );
+    if (textFromDocxFile) {
+      textForDenialCode = textFromDocxFile
+        .replace(/{PatientName}/g, patientName)
+        .replace(/{DenialCode}/g, denialCode);
+    } else {
+      showError("Template with this denial code doesn't exist");
+    }
   } catch (error) {
     console.log(error);
   }
-  // const textForDenialCode = `${denialCode}.docx`;
   outputText = `${textForProcedureCode}\r\n\r\n${textForDenialCode}`;
   textAreaForProcedureCode.value = outputText;
-  // return outputText;
 }
 
 async function checkCodes() {
@@ -58,75 +49,37 @@ async function checkCodes() {
   //   showError("First code doesn't exist");
   //   noErrors = false;
   // }
-  // if (!denialCodeDB.includes(denialCode) && denialCode !== "") {
-  //   showError("Second code doesn't exist");
+  // if (!files.includes(`${denialCode}.docx`)) {
+  //   showError(`Template with that denial code: ${denialCode} doesn't exist`);
   //   noErrors = false;
   // }
 
   if (procedureCode == "") {
-    showError("Please enter first code");
+    showError("Enter procedure code");
     noErrors = false;
   }
   if (denialCode == "") {
-    showError("Please enter second code");
+    showError("Enter denial code");
     noErrors = false;
   }
   if (patientName == "") {
-    showError("Please enter patient's name");
+    showError("Enter patient's name");
     noErrors = false;
   }
 
   if (noErrors) {
-    // const templateCode = checkCombination(procedureCode, denialCode);
-    // if (!templateCode) return false;
-    // console.log(`TEMPLATE CODE: ${templateCode}`);
-    // showTemplateCode(templateCode);
-    // outputForProcedureCode(procedureCode, patientName);
-    // outputForDenialCode(denialCode, patientName);
     await getOutputText(procedureCode, denialCode, patientName);
   } else {
     return noErrors;
   }
 }
 
-function showTemplateCode(templateCode) {
-  const errorText = document.createElement("h1");
-  errorText.style.color = "green";
-  errorText.innerText = templateCode;
-  errors.appendChild(errorText);
-}
-
 function showError(text) {
-  const errorText = document.createElement("h1");
+  const errorText = document.createElement("h3");
   errorText.style.color = "red";
   errorText.innerText = text;
+  errorText.style.fontFamily = "sans-serif";
   errors.appendChild(errorText);
-}
-
-// check what is the combination of two codes
-// function checkCombination(procedureCode, denialCode) {
-//   // Object.keys(combinations);
-//   const combinedCode = `${procedureCode}+${denialCode}`;
-//   console.log(combinedCode);
-//   if (!combinations[combinedCode]) {
-//     showError("Template doesn't exist");
-//     return;
-//   }
-//   return combinations[combinedCode];
-// }
-
-function handleFile(event) {
-  const file = event.target.files[0]; // Get the first selected file
-  if (file) {
-    const reader = new FileReader();
-
-    reader.onload = function (e) {
-      const contents = e.target.result;
-      errors.innerText = contents;
-    };
-
-    reader.readAsText(file); // Read the file as text
-  }
 }
 
 clearButton.addEventListener("click", (e) => {
@@ -134,23 +87,26 @@ clearButton.addEventListener("click", (e) => {
 });
 
 form.addEventListener("submit", async (e) => {
-  //   if (checkCodes()) {
-  //     e.preventDefault();
-  //   }
   e.preventDefault();
   errors.innerText = "";
   await checkCodes();
 });
 
-openFolderButton.addEventListener("click", async () => {
-  files = await window.electronAPI.openFolder();
-  errors.innerText = files;
-  console.log(files);
-});
+async function handleOpenFolder() {
+  const { docxFiles, folderPath } = await window.electronAPI.openFolder();
+  files = docxFiles;
+}
+
+// window.addEventListener("load", openLastSavedFolder);
+
+openFolderButton.addEventListener("click", handleOpenFolder);
 
 procedureCodeInput.addEventListener("keydown", () => {
   errors.innerText = "";
 });
 denialCodeInput.addEventListener("keydown", () => {
+  errors.innerText = "";
+});
+patientNameInput.addEventListener("keydown", () => {
   errors.innerText = "";
 });

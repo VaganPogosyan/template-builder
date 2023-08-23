@@ -2,6 +2,9 @@ const { app, BrowserWindow, dialog, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs/promises");
 const mammoth = require("mammoth");
+const Store = require("electron-store");
+const store = new Store();
+
 let docxFiles;
 let folderPath;
 
@@ -19,22 +22,38 @@ function createMainWindow() {
   mainWindow.loadFile(path.join(__dirname, "./src/index.html"));
 }
 
+function setFolderPath(newPath) {
+  const lastSavedFolderPath = store.get("lastFolderPath");
+  if (newPath) {
+    store.set("lastFolderPath", newPath);
+    folderPath = store.get("lastFolderPath");
+    return;
+  } else if (lastSavedFolderPath) {
+    // if there's no new path simply get last saved folder path in store
+    folderPath = lastSavedFolderPath;
+    // console.log(`got folder path from store : ${folderPath}`);
+    return;
+  } else if (!lastSavedFolderPath) return;
+}
+
 async function handleFolderOpen() {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ["openDirectory"],
   });
 
   if (!canceled) {
-    folderPath = filePaths[0];
+    setFolderPath(filePaths[0]);
+    console.log(`folderpath = ${folderPath}`);
     const files = await fs.readdir(folderPath);
-    // console.log(folderPath);
     docxFiles = files.filter((file) => path.extname(file) === ".docx");
-    return docxFiles;
+    return { docxFiles, folderPath };
+  } else {
+    return { docxFiles: "", folderPath: "" };
   }
 }
 
-function handelReadDocxFile(event, fileName) {
-  if (!fileName) console.log("wtf");
+function handleReadDocxFile(event, fileName) {
+  if (!fileName) return "Error";
   const docxFilePath = `${folderPath}/${fileName}`;
   console.log("docxFilePath: " + docxFilePath);
 
@@ -54,8 +73,13 @@ function handelReadDocxFile(event, fileName) {
 app.whenReady().then(() => {
   ipcMain.handle("dialog:openFolder", handleFolderOpen);
   ipcMain.handle("file:readDocxFile", (event, fileName) =>
-    handelReadDocxFile(event, fileName)
+    handleReadDocxFile(event, fileName)
   );
+
+  // store.clear();
+  // console.log("store cleared");
+
+  setFolderPath();
 
   createMainWindow();
 
