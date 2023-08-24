@@ -4,12 +4,13 @@ const fs = require("fs/promises");
 const mammoth = require("mammoth");
 const Store = require("electron-store");
 const store = new Store();
+let mainWindow;
 
 let docxFiles;
 let folderPath;
 
 function createMainWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -20,20 +21,29 @@ function createMainWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, "./src/index.html"));
+
+  mainWindow.on("close", (event) => {
+    if (app.quitting) {
+      mainWindow = null;
+    } else {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+  });
 }
 
 function setFolderPath(newPath) {
-  const lastSavedFolderPath = store.get("lastFolderPath");
+  lastSavedFolderPath = store.get("lastFolderPath");
   if (newPath) {
     store.set("lastFolderPath", newPath);
     folderPath = store.get("lastFolderPath");
     return;
   } else if (lastSavedFolderPath) {
-    // if there's no new path simply get last saved folder path in store
     folderPath = lastSavedFolderPath;
-    // console.log(`got folder path from store : ${folderPath}`);
     return;
-  } else if (!lastSavedFolderPath) return;
+  } else if (!lastSavedFolderPath) {
+    return;
+  }
 }
 
 async function handleFolderOpen() {
@@ -43,20 +53,17 @@ async function handleFolderOpen() {
 
   if (!canceled) {
     setFolderPath(filePaths[0]);
-    console.log(`folderpath = ${folderPath}`);
     const files = await fs.readdir(folderPath);
     docxFiles = files.filter((file) => path.extname(file) === ".docx");
-    return { docxFiles, folderPath };
+    return docxFiles;
   } else {
-    return { docxFiles: "", folderPath: "" };
+    return "";
   }
 }
 
 function handleReadDocxFile(event, fileName) {
   if (!fileName) return "Error";
   const docxFilePath = `${folderPath}/${fileName}`;
-  console.log("docxFilePath: " + docxFilePath);
-
   let output = "";
   output = mammoth
     .extractRawText({ path: docxFilePath })
@@ -70,14 +77,20 @@ function handleReadDocxFile(event, fileName) {
   return output;
 }
 
+function handleTest(event, value) {
+  return value;
+}
+
 app.whenReady().then(() => {
   ipcMain.handle("dialog:openFolder", handleFolderOpen);
   ipcMain.handle("file:readDocxFile", (event, fileName) =>
     handleReadDocxFile(event, fileName)
   );
+  ipcMain.handle("getLastFolderPath", () => {
+    return store.get("lastFolderPath");
+  });
 
   // store.clear();
-  // console.log("store cleared");
 
   setFolderPath();
 
@@ -85,6 +98,11 @@ app.whenReady().then(() => {
 
   if (BrowserWindow.getAllWindows().length === 0) createMainWindow();
 });
+
+app.on("activate", () => {
+  mainWindow.show();
+});
+app.on("before-quit", () => (app.quitting = true));
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") app.quit();

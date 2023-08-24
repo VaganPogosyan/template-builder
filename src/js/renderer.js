@@ -28,9 +28,10 @@ async function getOutputText(procedureCode, denialCode, patientName) {
         .replace(/{DenialCode}/g, denialCode);
     } else {
       showError("Template with this denial code doesn't exist");
+      return;
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
   outputText = `${textForProcedureCode}\r\n\r\n${textForDenialCode}`;
   textAreaForProcedureCode.value = outputText;
@@ -93,11 +94,9 @@ form.addEventListener("submit", async (e) => {
 });
 
 async function handleOpenFolder() {
-  const { docxFiles, folderPath } = await window.electronAPI.openFolder();
-  files = docxFiles;
+  files = await window.electronAPI.openFolder();
+  location.reload();
 }
-
-// window.addEventListener("load", openLastSavedFolder);
 
 openFolderButton.addEventListener("click", handleOpenFolder);
 
@@ -109,4 +108,18 @@ denialCodeInput.addEventListener("keydown", () => {
 });
 patientNameInput.addEventListener("keydown", () => {
   errors.innerText = "";
+});
+
+window.addEventListener("DOMContentLoaded", async () => {
+  const folderPath = await window.electronAPI.getLastFolderPath();
+  if (!folderPath) {
+    // disable mainForm
+    mainForm.style.opacity = 0.1;
+    mainForm.style.pointerEvents = "none";
+  }
+  //  else {
+  //   // enable form
+  //   mainForm.style.opacity = 1;
+  //   mainForm.style.pointerEvents = "auto";
+  // }
 });
