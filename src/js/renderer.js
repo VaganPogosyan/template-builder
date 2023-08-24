@@ -7,8 +7,9 @@ const patientNameInput = document.querySelector("#patientName");
 const form = document.querySelector("#form");
 const errors = document.querySelector("#errors");
 const fileInput = document.querySelector("#fileInput");
-const textAreaForProcedureCode = document.querySelector("#textareaOutput");
+const textareaOutput = document.querySelector("#textareaOutput");
 const mainForm = document.querySelector("#mainForm");
+const copyTextButton = document.querySelector("#copyTextButton");
 
 let files;
 
@@ -34,7 +35,7 @@ async function getOutputText(procedureCode, denialCode, patientName) {
     console.error(error);
   }
   outputText = `${textForProcedureCode}\r\n\r\n${textForDenialCode}`;
-  textAreaForProcedureCode.value = outputText;
+  textareaOutput.value = outputText;
 }
 
 async function checkCodes() {
@@ -117,9 +118,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     mainForm.style.opacity = 0.1;
     mainForm.style.pointerEvents = "none";
   }
-  //  else {
-  //   // enable form
-  //   mainForm.style.opacity = 1;
-  //   mainForm.style.pointerEvents = "auto";
-  // }
+});
+
+copyTextButton.addEventListener("click", function () {
+  textareaOutput.select();
+  document.execCommand("copy");
+  textareaOutput.setSelectionRange(0, 0);
 });
