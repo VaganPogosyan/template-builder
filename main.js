@@ -11,8 +11,8 @@ let folderPath;
 
 function createMainWindow() {
   mainWindow = new BrowserWindow({
-    width: 700,
-    height: 600,
+    width: 690,
+    height: 990,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: true,

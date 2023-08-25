@@ -1,36 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self'"/>
+    <link rel="stylesheet" href="css/pico-1.5.10/css/pico.min.css">
     <link rel="stylesheet" href="./css/main.css">
     <script src="./js/renderer.js" defer></script>
     <title>Template Builder</title>
 </head>
-<body>
-    <h1>Template Builder</h1>
-    <button type="button" id="openFolderButton">Open folder</button>
+<body class="container">
+    <!-- <h2>Template Builder</h2> -->
+    <button type="button" id="openFolderButton" class="outline primary">Open folder</button>
     <div id="mainForm">
-        <form class="form" id="form">
-            <label for="procedureCode">Procedure Code:</label>
-            <input type="text" name="procedureCode" id="procedureCode" class="codeInput">
+        <form class="grid" id="form">
+            <div>
+                <label for="patientName">Patient's Name
+                    <input type="text" name="patientName" id="patientName" placeholder="" class="codeInput">
+                </label>
+
+                <label for="procedureCode">Procedure Code
+                    <input type="text" name="procedureCode" id="procedureCode" placeholder="" class="codeInput">
+                </label>
+
+                <label for="denialCode">Denial Code
+                    <input type="text" name="denialCode" id="denialCode" placeholder="" class="codeInput">
+                </label>
+            </div>
+                <div class="actionButtons">
+                    <button id="submitButton" type="submit">Build Template</button>
+                    <button id="clearButton" class="secondary">Clear</button>
+                </div>
             
-            <label for="patientName">Patient Name:</label>
-            <input type="text" name="patientName" id="patientName" class="codeInput">
-            
-            <label for="procedureCode">Denial Code:</label>
-            <input type="text" name="denialCode" id="denialCode" class="codeInput">
-            
-            <button id="submitButton" type="submit">Find Template</button>
-            <button id="clearButton">Clear</button>
         </form>
         <div id="errors"></div>
-        <h2>Output: </h2>
+        <h6>Output: </h6>
         <div id="outputCode">
-            <textarea id="textareaOutput" rows="10"></textarea>
+            <textarea id="textareaOutput" rows="8"></textarea>
             <button type="button" id="copyTextButton">Copy text</button>
         </div>
     </div>
+
 </body>
 </html>

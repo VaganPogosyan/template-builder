@@ -15,14 +15,14 @@ let files;
 
 async function getOutputText(procedureCode, denialCode, patientName) {
   let outputText = "";
-  const textForProcedureCode = `Hello ${patientName}, your procedure code is: ${procedureCode}`;
+  const textForProcedureCode = `To whom it may concern,\n\nIt came to our attention that the CPT code ${procedureCode} was denied with ${denialCode}. After a thorough review of the claim, it was determined that the denial decision is invalid.`;
 
-  // get filepath to pass into readDocxFile
   let textForDenialCode = "";
   try {
     textFromDocxFile = await window.electronAPI.readDocxFile(
       `${denialCode}.docx`
     );
+    console.log(textFromDocxFile);
     if (textFromDocxFile) {
       textForDenialCode = textFromDocxFile
         .replace(/{PatientName}/g, patientName)
@@ -47,15 +47,6 @@ async function checkCodes() {
   const patientName = patientNameInput.value.toString().trim();
   let noErrors = true;
 
-  // if (!procedureCodeDB.includes(procedureCode) && procedureCode !== "") {
-  //   showError("First code doesn't exist");
-  //   noErrors = false;
-  // }
-  // if (!files.includes(`${denialCode}.docx`)) {
-  //   showError(`Template with that denial code: ${denialCode} doesn't exist`);
-  //   noErrors = false;
-  // }
-
   if (procedureCode == "") {
     showError("Enter procedure code");
     noErrors = false;
@@ -77,7 +68,7 @@ async function checkCodes() {
 }
 
 function showError(text) {
-  const errorText = document.createElement("h3");
+  const errorText = document.createElement("h6");
   errorText.style.color = "red";
   errorText.innerText = text;
   errorText.style.fontFamily = "sans-serif";
@@ -123,5 +114,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 copyTextButton.addEventListener("click", function () {
   textareaOutput.select();
   document.execCommand("copy");
-  textareaOutput.setSelectionRange(0, 0);
+
+  // textareaOutput.setSelectionRange(0, 0);
 });

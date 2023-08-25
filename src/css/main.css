@@ -1,27 +1,38 @@
-.codeInput, #submitButton, #clearButton {
-    font-size: 1.5rem;
-    width: 30%;
-    margin: 10px;
+#submitButton {
+
+}
+
+body {
+    margin-top: 30px;
 }
 
 #outputCode {
-    width: 100%;
+    /* width: 100%; */
 }
 
 #textareaOutput {
-    position: relative;
-    width: 600px;
-    height: 40%;
-    /* font-size: medium; */
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    /* height: 10; */
 }
 
 #copyTextButton {
-    text-align: right;
+    /* text-align: right; */
 }
 
-.form {
-    /* display: grid; */
-    /* grid: auto-flow / 1fr 1fr 2fr; */
-    /* display: flex; */
+.actionButtons {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }
+
+/* [data-theme="light"],
+:root:not([data-theme="dark"]) {
+  --primary: #2a6be3;
+  --primary-hover: #194595;
+  --primary-focus: rgba(68, 27, 216, 0.125);
+  --primary-inverse: #FFF;
+  --secondary: #1c15aa;
+  --secondary-hover: #241add;
+  --contrast:#5a1296;
+  --contrast-hover:#5a1296;
+} */
