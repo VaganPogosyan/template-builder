@@ -8,10 +8,28 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish"
+    "publish": "electron-forge publish",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder -w",
+    "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [],
   "author": "Vagan Pogosyan",
+  "build": {
+    "appId": "com.electron.template-builder",
+    "win": {
+      "icon": "./src/images/icon.ico",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
+      ]
+    }
+  },
   "license": "ISC",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0",
